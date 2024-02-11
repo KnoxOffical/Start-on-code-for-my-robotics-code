@@ -1,0 +1,64 @@
+## The code behind all of it
+
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <unistd.h>
+
+// Simulate a servo motor control class
+class Servo {
+public:
+    void attach(int pin) {
+        // Simulate attaching the motor to a pin
+        std::cout << "Attaching servo motor to pin " << pin << std::endl;
+    }
+
+    void write(int angle) {
+        // Simulate setting the motor to a specific angle
+        std::cout << "Setting servo motor angle to " << angle << " degrees" << std::endl;
+    }
+};
+
+Servo motor; // Create a servo object to control the motor
+
+void handleControlSignal(int signal) {
+    if (signal == 1) {
+        motor.write(90); // Set motor to move forward
+    } else if (signal == 2) {
+        motor.write(0); // Set motor to move backward
+    } else if (signal == 3) {
+        motor.write(90); // Set motor to turn left
+    }
+}
+
+void autonomousBehavior() {
+    // Example: perform a random movement every few seconds
+    if (time(nullptr) % 5 == 0) {
+        int randomAngle = rand() % 180; // Generate a random angle
+        motor.write(randomAngle); // Move the motor to the random angle
+        sleep(1); // Wait for the movement to complete
+        motor.write(90); // Stop the motor
+    }
+}
+
+int main() {
+    srand(time(nullptr)); // Initialize random seed
+
+    // Attach the motor to a pin
+    motor.attach(9);
+
+    // Main loop
+    while (true) {
+        // Simulate receiving control signals from the remote controller
+        int controlSignal;
+        std::cout << "Enter control signal (1 - Move forward, 2 - Move backward, 3 - Stop): ";
+        std::cin >> controlSignal;
+
+        handleControlSignal(controlSignal);
+
+        // Simulate autonomous behavior
+        autonomousBehavior();
+    }
+
+    return 0;
+}
